@@ -162,7 +162,7 @@ Create a `.env` file in the `backend/` directory with the following variables:
 | `DAILY_BUDGET_USD` | Maximum daily API spend in USD | No | `50.0` |
 | `MAX_QUEUE_SIZE` | Maximum queue capacity | No | `50` |
 | `HOST` | Server bind address | No | `0.0.0.0` |
-| `PORT` | Server port | No | `8000` |
+| `PORT` | Server port | No | `8080` |
 | `DISCORD_WEBHOOK_URL` | Discord webhook for alerts (optional) | No | — |
 
 **Example `.env` file:**
@@ -186,7 +186,7 @@ MAX_QUEUE_SIZE=50
 
 # Server
 HOST=0.0.0.0
-PORT=8000
+PORT=8080
 
 # Discord alerts (optional)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
@@ -200,8 +200,8 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
 
 ```bash
 cd backend
-source .venv/bin/activate  # Or use: uv run uvicorn ...
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+source .venv/bin/activate
+python run.py
 ```
 
 **Or use the startup script:**
@@ -210,7 +210,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ./scripts/start.sh
 ```
 
-The backend will start on `http://localhost:8000`.
+The backend will start on `http://localhost:8080`.
 
 **Overlay Development:**
 
@@ -237,10 +237,10 @@ npm run build
 ```bash
 cd backend
 source .venv/bin/activate
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+python run.py
 ```
 
-> **Note**: Use `--workers 1` to avoid issues with SQLite and in-memory state.
+> **Note**: For production, you may want to disable reload mode by editing `run.py` and setting `reload=False`.
 
 **3. Add overlay to OBS:**
 
@@ -277,17 +277,17 @@ The system supports 4 donation tiers with increasing capabilities:
 
 **Monitoring the System:**
 
-- **Queue Status**: `GET http://localhost:8000/api/queue`
-- **Session Stats**: `GET http://localhost:8000/api/stats`
-- **Health Check**: `GET http://localhost:8000/api/health`
-- **Interactive Docs**: http://localhost:8000/docs
+- **Queue Status**: `GET http://localhost:8080/api/queue`
+- **Session Stats**: `GET http://localhost:8080/api/stats`
+- **Health Check**: `GET http://localhost:8080/api/health`
+- **Interactive Docs**: http://localhost:8080/docs
 
 ### For Viewers (Testing Donations Manually)
 
 Test donation submission without Chzzk:
 
 ```bash
-curl -X POST "http://localhost:8000/api/donation" \
+curl -X POST "http://localhost:8080/api/donation" \
   -H "Content-Type: application/json" \
   -d '{
     "donor_name": "테스터",
@@ -302,31 +302,31 @@ curl -X POST "http://localhost:8000/api/donation" \
 **Banning a User:**
 
 ```bash
-curl -X POST "http://localhost:8000/api/admin/ban/USER_ID?reason=Security%20violation"
+curl -X POST "http://localhost:8080/api/admin/ban/USER_ID?reason=Security%20violation"
 ```
 
 **Unbanning a User:**
 
 ```bash
-curl -X DELETE "http://localhost:8000/api/admin/ban/USER_ID"
+curl -X DELETE "http://localhost:8080/api/admin/ban/USER_ID"
 ```
 
 **Listing All Bans:**
 
 ```bash
-curl "http://localhost:8000/api/admin/bans"
+curl "http://localhost:8080/api/admin/bans"
 ```
 
 **Exporting User Data (PIPA Compliance):**
 
 ```bash
-curl "http://localhost:8000/admin/privacy/export/USER_ID"
+curl "http://localhost:8080/admin/privacy/export/USER_ID"
 ```
 
 **Deleting User Data (PIPA Compliance):**
 
 ```bash
-curl -X DELETE "http://localhost:8000/admin/privacy/delete/USER_ID"
+curl -X DELETE "http://localhost:8080/admin/privacy/delete/USER_ID"
 ```
 
 ---
@@ -554,8 +554,8 @@ This script verifies:
 ## API Documentation
 
 **Interactive API Docs:** Once the server is running, visit:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Swagger UI**: http://localhost:8080/docs
+- **ReDoc**: http://localhost:8080/redoc
 
 ### Queue Endpoints
 
@@ -589,13 +589,13 @@ Get current queue state.
 
 WebSocket endpoint for real-time queue updates.
 
-**Connection:** `ws://localhost:8000/api/ws/queue`
+**Connection:** `ws://localhost:8080/api/ws/queue`
 
 **Message Format:** Same as `GET /api/queue` response, sent on every state change.
 
 **JavaScript Example:**
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/api/ws/queue');
+const ws = new WebSocket('ws://localhost:8080/api/ws/queue');
 ws.onmessage = (event) => {
   const queueState = JSON.parse(event.data);
   console.log('Current:', queueState.current);

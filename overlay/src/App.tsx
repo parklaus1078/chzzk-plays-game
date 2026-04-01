@@ -4,7 +4,7 @@ import { BanAlert } from "./components/BanAlert";
 import { CompletionAlert } from "./components/CompletionAlert";
 
 function App() {
-  const state = useQueueWebSocket("ws://localhost:8000/ws/queue");
+  const state = useQueueWebSocket("ws://localhost:8080/ws/queue");
 
   return (
     <>
