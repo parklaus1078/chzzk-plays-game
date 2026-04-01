@@ -29,9 +29,8 @@ def mock_donation():
         donation = MagicMock()
         donation.pay_amount = amount
         donation.donation_text = message
-        donation.profile = MagicMock()
-        donation.profile.nickname = nickname
-        donation.profile.user_id_hash = "test-user-123"
+        donation.donator_name = nickname
+        donation.donator_id = "test-user-123"
         return donation
 
     return _create_donation

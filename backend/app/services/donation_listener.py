@@ -65,13 +65,13 @@ class DonationListener:
                 logger.debug(
                     "donation_below_minimum",
                     amount=donation.pay_amount,
-                    donor=donation.profile.nickname,
+                    donor=donation.donator_name,
                 )
                 return
 
             event = DonationEvent(
-                donor_name=donation.profile.nickname,
-                donor_id=donation.profile.user_id_hash,
+                donor_name=donation.donator_name,
+                donor_id=donation.donator_id,
                 amount=donation.pay_amount,
                 message=donation.donation_text,
                 tier=tier,
